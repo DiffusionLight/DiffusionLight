@@ -26,7 +26,7 @@ python exposure2hdr.py --input_dir output/envmap --output_dir output/hdr
 
 ## Installation
 
-To setup python environment need to run both conda and pip with following command
+To setup the Python environment, you need to run the following commands in both Conda and pip:
 
 ```shell
 conda env create -f environment.yml
@@ -34,37 +34,54 @@ conda activate diffusionlight
 pip install -r requirements.txt
 ```
 
-Note that Conda is optional but you have to manually install CUDA-toolkit and OpenEXR.
+Note that Conda is optional. However, if you choose not to use Conda, you must manually install CUDA-toolkit and OpenEXR.
 
-## Predict light estimation
-Our code is not end-to-end. So, you have to run 3 commands
+## Prediction
 
-### 1. Predict the chrome ball
-FIrst we predict the chromeball in the different EV (Exposure compensation Value) by using the comamnd 
+### 0. Preparing the image
+
+Please resize image to 1024x1024. In case the image is not a square. We recommend to pad with black border.
+
+
+### 1. Inpainting the chrome ball
+
+First, we predict the chrome ball in different exposure values (EV) using the following command:
 
 ```shell
 python inpaint.py --dataset <input_directory> --output_dir <output_directory>
 ```
 
-### 2. Convert from the chrome ball into environment map 
+This command outputs three subdirectories:  `control`, `raw`, and  `square`
+
+The contents of each directory are:
+
+- `control`: Conditioned depth map
+- `raw`: Inpainted image with a chrome ball in the center
+- `square`: Square-cropped chrome ball (used for the next step)
+
+
+### 2. Projecting a ball into an environment map 
+
+Next, we project the chrome ball from the previous step to the LDR environment map using the following command:
+
 ```shell
 python ball2envmap.py --ball_dir <output_directory>/square --envmap_dir <output_directory>/envmap
 ```
 
-### 3. Combine differnet exposure to the HDR environment map 
-```shell
-python ball2envmap.py --ball_dir <output_directory>/envmap --envmap <output_directory>/hdr
-```
+### 3. Compose HDR image
+
+Finally, we compose an HDR image from multiple LDR environment maps using our custom exposure bracketing:
 
 ```shell
-python inpaint.py --dataset example/images --output_dir output
+python exposure2hdr.py --input_dir <output_directory>/envmap --output_dir <output_directory>/hdr
 ```
 
-
-The predicted light estimation will locate at `<output_directory>/hdr`
+The predicted light estimation will be located at `<output_directory>/hdr` and can be used for downstream tasks such as object insertion. We will also use it to compare with other methods.
 
 ## Evaluation 
-We use the envaluation code from StyleLight and EditableIndoor. You can use their code. but we will provide the *slightly* modifly version at [diffusionlight-eval](https://github.com)
+We use the evaluation code from [StyleLight](https://style-light.github.io/) and [Editable Indoor LightEstimation](https://arxiv.org/abs/2211.03928). You can use their code to measure our score.
+
+Additionally, we provide a *slightly* modified version of the evaluation code [DiffusionLight-evaluation](https://github.com) including the test input.
 
 ## Citation
 
