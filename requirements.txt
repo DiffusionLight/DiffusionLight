@@ -1,0 +1,24 @@
+# utility
+tqdm==4.66.1
+scikit-image==0.21.0
+imageio==2.31.1
+Pillow==9.3.0
+numpy==1.24.1
+natsort==8.4.0
+
+# EXR handling 
+skylibs==0.7.4
+OpenEXR==1.3.9
+
+# We use pytorch pip instead because conda is mess up
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch==2.0.1+cu118
+torchvision==0.15.2+cu118
+torchaudio==2.0.2+cu118
+
+# Diffusers dependencies
+accelerate==0.21.0
+datasets==2.13.1
+diffusers==0.21.0
+transformers==4.34.1
+xformers==0.0.20

@@ -1,0 +1,3 @@
+output/
+temp_inpaint_iterative/
+*.pyc
