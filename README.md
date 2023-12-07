@@ -81,7 +81,7 @@ The predicted light estimation will be located at `<output_directory>/hdr` and c
 ## Evaluation 
 We use the evaluation code from [StyleLight](https://style-light.github.io/) and [Editable Indoor LightEstimation](https://arxiv.org/abs/2211.03928). You can use their code to measure our score.
 
-Additionally, we provide a *slightly* modified version of the evaluation code [DiffusionLight-evaluation](https://github.com) including the test input.
+Additionally, we provide a *slightly* modified version of the evaluation code at [DiffusionLight-evaluation](https://github.com/DiffusionLight/DiffusionLight-evaluation) including the test input.
 
 ## Citation
 
