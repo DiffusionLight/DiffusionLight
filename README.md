@@ -19,7 +19,7 @@
 conda env create -f environment.yml
 conda activate diffusionlight
 pip install -r requirements.txt
-python inpaint.py --dataset example/images --output_dir output
+python inpaint.py --dataset example --output_dir output
 python ball2envmap.py --ball_dir output/square --envmap_dir output/envmap
 python exposure2hdr.py --input_dir output/envmap --output_dir output/hdr
 ```
