@@ -79,7 +79,7 @@ python exposure2hdr.py --input_dir <output_directory>/envmap --output_dir <outpu
 The predicted light estimation will be located at `<output_directory>/hdr` and can be used for downstream tasks such as object insertion. We will also use it to compare with other methods.
 
 ## Evaluation 
-We use the evaluation code from [StyleLight](https://style-light.github.io/) and [Editable Indoor LightEstimation](https://arxiv.org/abs/2211.03928). You can use their code to measure our score.
+We use the evaluation code from [StyleLight](https://style-light.github.io/) and [Editable Indoor LightEstimation](https://lvsn.github.io/EditableIndoorLight/). You can use their code to measure our score.
 
 Additionally, we provide a *slightly* modified version of the evaluation code at [DiffusionLight-evaluation](https://github.com/DiffusionLight/DiffusionLight-evaluation) including the test input.
 
