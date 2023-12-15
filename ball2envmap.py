@@ -79,8 +79,11 @@ def process_image(args: argparse.Namespace, file_name: str):
     if file_name.endswith(".exr"):
         ball_image = ezexr.imread(ball_path)
     else:
-        ball_image = skimage.io.imread(ball_path)
-        ball_image = skimage.img_as_float(ball_image)
+        try:
+            ball_image = skimage.io.imread(ball_path)
+            ball_image = skimage.img_as_float(ball_image)
+        except:
+            return None
 
     # compute  normal map that create from reflect vector
     env_grid = create_envmap_grid(args.envmap_height * args.scale)   
