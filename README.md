@@ -42,8 +42,7 @@ Note that Conda is optional. However, if you choose not to use Conda, you must m
 
 ### 0. Preparing the image
 
-Please resize image to 1024x1024. In case the image is not a square. We recommend to pad with black border.
-
+Please resize the input image to 1024x1024. If the image is not square, we recommend padding it with a black border.
 
 ### 1. Inpainting the chrome ball
 
