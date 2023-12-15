@@ -47,7 +47,7 @@ def process_image(args, info):
     files = [info['ev'][e] for e in evs]
     
     # inital first image
-    image0 = skimage.io.imread(os.path.join(args.input_dir, files[0]))
+    image0 = skimage.io.imread(os.path.join(args.input_dir, files[0]))[...,:3]
     image0 = skimage.img_as_float(image0)
     image0_linear = np.power(image0, args.gamma)
 
@@ -56,7 +56,7 @@ def process_image(args, info):
     for i in range(len(evs)):
         # load image
         path = os.path.join(args.input_dir, files[i])
-        image = skimage.io.imread(path)
+        image = skimage.io.imread(path)[...,:3]
         image = skimage.img_as_float(image)
         
         # apply gama correction
