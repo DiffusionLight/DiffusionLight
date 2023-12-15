@@ -114,7 +114,10 @@ class BallInpainter():
             ).to(device)
             control_generator = None
         
-        pipe.enable_xformers_memory_efficient_attention()
+        try:
+            pipe.enable_xformers_memory_efficient_attention()
+        except:
+            pass
         pipe.set_progress_bar_config(disable=True)
 
         pipe.scheduler = SAMPLERS[sampler].from_config(pipe.scheduler.config)
@@ -162,7 +165,10 @@ class BallInpainter():
             ).to(device)
             control_generator = None
         
-        pipe.enable_xformers_memory_efficient_attention()
+        try:
+            pipe.enable_xformers_memory_efficient_attention()
+        except:
+            pass
         # pipe.enable_model_cpu_offload()
         pipe.set_progress_bar_config(disable=True)
         pipe.scheduler = SAMPLERS[sampler].from_config(pipe.scheduler.config)
