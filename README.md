@@ -1,6 +1,6 @@
 # DiffusionLight: Light Probes for Free by Painting a Chrome Ball
 
-### [Project Page](https://diffusionlight.github.io/) | [Paper](https://arxiv.org/abs/2312.09168)
+### [Project Page](https://diffusionlight.github.io/) | [Paper](https://arxiv.org/abs/2312.09168) | [HuggingFace](https://huggingface.co/DiffusionLight/DiffusionLight)
 
 ![](https://diffusionlight.github.io/assets/images/thumbnail.jpg)
 
