@@ -314,7 +314,7 @@ class BallInpainter():
 
         x = extra_kwargs["x"]
         y = extra_kwargs["y"]
-        r = getattr(extra_kwargs, "r", 256)  # default to ball_size = 256
+        r = 256  if "r" not in extra_kwargs else extra_kwargs["r"]
         _, mask_ball_for_crop = get_ideal_normal_ball(size=r)
         
         # generate initial average ball
