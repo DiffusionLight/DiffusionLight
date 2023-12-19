@@ -58,10 +58,10 @@ def create_argparser():
     parser.add_argument('--no_random_loader', dest='random_loader', action='store_false', help="by default, we random how dataset load. This make us able to peak into the trend of result without waiting entire dataset. but can disable if prefereed")
     parser.set_defaults(random_loader=True)
 
-    parser.add_argument('--cpu', dest='is_cpu', action='store_true', help="by default, we random how dataset load. This make us able to peak into the trend of result without waiting entire dataset. but can disable if prefereed")
+    parser.add_argument('--cpu', dest='is_cpu', action='store_true', help="using CPU inference instead of GPU inference")
     parser.set_defaults(is_cpu=False)
 
-    parser.add_argument('--offload', dest='offload', action='store_false', help="by default, we random how dataset load. This make us able to peak into the trend of result without waiting entire dataset. but can disable if prefereed")
+    parser.add_argument('--offload', dest='offload', action='store_false', help="to enable diffusers cpu offload")
     parser.set_defaults(offload=False)
     
     parser.add_argument("--limit_input", default=0, type=int, help="limit number of image to process to n image (0 = no limit), useful for run smallset")
