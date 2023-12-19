@@ -57,6 +57,12 @@ def create_argparser():
     
     parser.add_argument('--no_random_loader', dest='random_loader', action='store_false', help="by default, we random how dataset load. This make us able to peak into the trend of result without waiting entire dataset. but can disable if prefereed")
     parser.set_defaults(random_loader=True)
+
+    parser.add_argument('--cpu', dest='is_cpu', action='store_true', help="by default, we random how dataset load. This make us able to peak into the trend of result without waiting entire dataset. but can disable if prefereed")
+    parser.set_defaults(is_cpu=False)
+
+    parser.add_argument('--offload', dest='offload', action='store_false', help="by default, we random how dataset load. This make us able to peak into the trend of result without waiting entire dataset. but can disable if prefereed")
+    parser.set_defaults(offload=False)
     
     parser.add_argument("--limit_input", default=0, type=int, help="limit number of image to process to n image (0 = no limit), useful for run smallset")
 
@@ -147,7 +153,12 @@ def main():
     args = create_argparser().parse_args()
         
     # get local rank
-    device = dist_util.dev()
+    if args.is_cpu:
+        device = torch.device("cpu")
+        torch_dtype = torch.float32
+    else:
+        device = dist_util.dev()
+        torch_dtype = torch.float16
     
     # so, we need ball_dilate >= 16 (2*vae_scale_factor) to make our mask shape = (272, 272)
     assert args.ball_dilate % 2 == 0 # ball dilation should be symmetric
@@ -155,16 +166,40 @@ def main():
     # create controlnet pipeline 
     if args.model_option in ["sdxl", "sdxl_fast"] and args.use_controlnet:
         model, controlnet = SD_MODELS[args.model_option], CONTROLNET_MODELS[args.model_option]
-        pipe = BallInpainter.from_sdxl(model=model, controlnet=controlnet, device=device)
+        pipe = BallInpainter.from_sdxl(
+            model=model, 
+            controlnet=controlnet, 
+            device=device,
+            torch_dtype = torch_dtype,
+            offload = args.offload
+        )
     elif args.model_option in ["sdxl", "sdxl_fast"] and not args.use_controlnet:
         model = SD_MODELS[args.model_option]
-        pipe = BallInpainter.from_sdxl(model=model, controlnet=None, device=device)
+        pipe = BallInpainter.from_sdxl(
+            model=model,
+            controlnet=None,
+            device=device,
+            torch_dtype = torch_dtype,
+            offload = args.offload
+        )
     elif args.use_controlnet:
         model, controlnet = SD_MODELS[args.model_option], CONTROLNET_MODELS[args.model_option]
-        pipe = BallInpainter.from_sd(model=model, controlnet=controlnet, device=device)
+        pipe = BallInpainter.from_sd(
+            model=model,
+            controlnet=controlnet,
+            device=device,
+            torch_dtype = torch_dtype,
+            offload = args.offload
+        )
     else:
         model = SD_MODELS[args.model_option]
-        pipe = BallInpainter.from_sd(model=model, controlnet=None, device=device)
+        pipe = BallInpainter.from_sd(
+            model=model,
+            controlnet=None,
+            device=device,
+            torch_dtype = torch_dtype,
+            offload = args.offload
+        )
 
     
     if args.lora_scale > 0 and args.lora_path is None:

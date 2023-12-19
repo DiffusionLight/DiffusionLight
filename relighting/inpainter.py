@@ -97,6 +97,7 @@ class BallInpainter():
                 sampler="unipc", 
                 torch_dtype=torch.float16,
                 disable_water_mask=True,
+                offload=False
     ):
         if controlnet is not None:
             control_signal_type = get_control_signal_type(controlnet)
@@ -115,11 +116,12 @@ class BallInpainter():
             control_generator = None
         
         try:
-            pipe.enable_xformers_memory_efficient_attention()
+            if torch_dtype==torch.float16 and device != torch.device("cpu"):
+                pipe.enable_xformers_memory_efficient_attention()
         except:
             pass
         pipe.set_progress_bar_config(disable=True)
-
+        
         pipe.scheduler = SAMPLERS[sampler].from_config(pipe.scheduler.config)
         
         return BallInpainter(pipe, "sd", control_generator, disable_water_mask)
@@ -132,7 +134,8 @@ class BallInpainter():
                 sampler="unipc", 
                 torch_dtype=torch.float16,
                 disable_water_mask=True,
-                use_fixed_vae=True
+                use_fixed_vae=True,
+                offload=False
     ):
         vae = VAE_MODELS["sdxl"]
         vae = AutoencoderKL.from_pretrained(vae, torch_dtype=torch_dtype).to(device) if use_fixed_vae else None
@@ -142,14 +145,14 @@ class BallInpainter():
             control_signal_type = get_control_signal_type(controlnet)
             controlnet = ControlNetModel.from_pretrained(
                 controlnet,
-                variant="fp16", # TODO: fix this
+                variant="fp16" if torch_dtype == torch.float16 else None,
                 use_safetensors=True,
                 torch_dtype=torch_dtype,
             ).to(device)
             pipe = CustomStableDiffusionXLControlNetInpaintPipeline.from_pretrained(
                 model,
                 controlnet=controlnet,
-                variant="fp16",
+                variant="fp16" if torch_dtype == torch.float16 else None,
                 use_safetensors=True,
                 torch_dtype=torch_dtype,
                 **extra_kwargs,
@@ -158,7 +161,7 @@ class BallInpainter():
         else:
             pipe = CustomStableDiffusionXLInpaintPipeline.from_pretrained(
                 model,
-                variant="fp16", # TODO: fix this
+                variant="fp16" if torch_dtype == torch.float16 else None,
                 use_safetensors=True,
                 torch_dtype=torch_dtype,
                 **extra_kwargs,
@@ -166,10 +169,13 @@ class BallInpainter():
             control_generator = None
         
         try:
-            pipe.enable_xformers_memory_efficient_attention()
+            if torch_dtype==torch.float16 and device != torch.device("cpu"):
+                pipe.enable_xformers_memory_efficient_attention()
         except:
             pass
-        # pipe.enable_model_cpu_offload()
+        
+        if offload and device != torch.device("cpu"):
+            pipe.enable_model_cpu_offload()
         pipe.set_progress_bar_config(disable=True)
         pipe.scheduler = SAMPLERS[sampler].from_config(pipe.scheduler.config)
         
