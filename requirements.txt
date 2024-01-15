@@ -20,5 +20,5 @@ torchaudio==2.0.2+cu118
 accelerate==0.21.0
 datasets==2.13.1
 diffusers==0.21.0
-transformers==4.34.1
+transformers==4.36.0
 xformers==0.0.20
