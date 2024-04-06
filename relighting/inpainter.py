@@ -254,9 +254,9 @@ class BallInpainter():
         prompt_embeds=None,
         pooled_prompt_embeds=None,
         use_cache_median=False,
+        guidance_scale=5.0, # In the paper, we use guidance scale to 5.0 (same as pipeline_xl.py)
         **extra_kwargs,
     ):
-
         def computeMedian(ball_images):
             all = np.stack(ball_images, axis=0)
             median = np.median(all, axis=0)
@@ -277,7 +277,6 @@ class BallInpainter():
             for i in tqdm(range(ball_per_iteration), disable=disable_progress):
                 seed = current_seed + i
                 new_generator = torch.Generator().manual_seed(seed)
-
                 output_image = self.pipeline(
                     prompt=prompt,
                     negative_prompt=negative_prompt,
@@ -296,6 +295,7 @@ class BallInpainter():
                     cross_attention_kwargs=cross_attention_kwargs,
                     prompt_embeds=prompt_embeds,
                     pooled_prompt_embeds=pooled_prompt_embeds,
+                    guidance_scale=guidance_scale,
                     **controlnet_kwargs
                 ).images[0]
                 
@@ -385,6 +385,7 @@ class BallInpainter():
         cross_attention_kwargs={},
         prompt_embeds=None,
         pooled_prompt_embeds=None,
+        guidance_scale=5.0, # (same as pipeline_xl.py)
         **extra_kwargs,
     ):
         height, width = self._default_height_width(height, width)
@@ -416,6 +417,7 @@ class BallInpainter():
             cross_attention_kwargs=cross_attention_kwargs,
             prompt_embeds=prompt_embeds,
             pooled_prompt_embeds=pooled_prompt_embeds,
+            guidance_scale=guidance_scale,
             **controlnet_kwargs
         )
 

@@ -40,7 +40,7 @@ def create_argparser():
     parser.add_argument("--prompt", type=str, default="a perfect mirrored reflective chrome ball sphere") 
     parser.add_argument("--prompt_dark", type=str, default="a perfect black dark mirrored reflective chrome ball sphere") 
     parser.add_argument("--negative_prompt", type=str, default="matte, diffuse, flat, dull") 
-    parser.add_argument("--model_option", default="sdxl", help='selecting fancy model option (sd15_old, sd15_new, sd21, sdxl)') # [sd15_old, sd15_new, or sd21]
+    parser.add_argument("--model_option", default="sdxl", help='selecting fancy model option (sd15_old, sd15_new, sd21, sdxl, sdxl_turbo)') # [sd15_old, sd15_new, or sd21]
     parser.add_argument("--output_dir", required=True, type=str, help="output directory")
     parser.add_argument("--img_height", type=int, default=1024, help="Dataset Image Height")
     parser.add_argument("--img_width", type=int, default=1024, help="Dataset Image Width")
@@ -48,6 +48,7 @@ def create_argparser():
     parser.add_argument("--seed", default="auto", type=str, help="Seed: right now we use single seed instead to reduce the time, (Auto will use hash file name to generate seed)")
     parser.add_argument("--denoising_step", default=30, type=int, help="number of denoising step of diffusion model")
     parser.add_argument("--control_scale", default=0.5, type=float, help="controlnet conditioning scale")
+    parser.add_argument("--guidance_scale", default=5.0, type=float, help="guidance scale (also known as CFG)")
     
     parser.add_argument('--no_controlnet', dest='use_controlnet', action='store_false', help='by default we using controlnet, we have option to disable to see the different')
     parser.set_defaults(use_controlnet=True)
@@ -164,7 +165,7 @@ def main():
     assert args.ball_dilate % 2 == 0 # ball dilation should be symmetric
     
     # create controlnet pipeline 
-    if args.model_option in ["sdxl", "sdxl_fast"] and args.use_controlnet:
+    if args.model_option in ["sdxl", "sdxl_fast", "sdxl_turbo"] and args.use_controlnet:
         model, controlnet = SD_MODELS[args.model_option], CONTROLNET_MODELS[args.model_option]
         pipe = BallInpainter.from_sdxl(
             model=model, 
@@ -173,7 +174,7 @@ def main():
             torch_dtype = torch_dtype,
             offload = args.offload
         )
-    elif args.model_option in ["sdxl", "sdxl_fast"] and not args.use_controlnet:
+    elif args.model_option in ["sdxl", "sdxl_fast", "sdxl_turbo"] and not args.use_controlnet:
         model = SD_MODELS[args.model_option]
         pipe = BallInpainter.from_sdxl(
             model=model,
@@ -201,6 +202,9 @@ def main():
             offload = args.offload
         )
 
+    if args.model_option in ["sdxl_turbo"]:
+        # Guidance scale is not supported in sdxl_turbo
+        args.guidance_scale = 0.0
     
     if args.lora_scale > 0 and args.lora_path is None:
         raise ValueError("lora scale is not 0 but lora path is not set")
@@ -319,6 +323,7 @@ def main():
                     'x': x,
                     'y': y,
                     'r': r,
+                    'guidance_scale': args.guidance_scale,
                 }
                 
                 if enabled_lora:

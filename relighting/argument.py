@@ -15,6 +15,7 @@ SD_MODELS = {
     "sd21": "stabilityai/stable-diffusion-2-inpainting",
     "sdxl": "stabilityai/stable-diffusion-xl-base-1.0",
     "sdxl_fast": "stabilityai/stable-diffusion-xl-base-1.0",
+    "sdxl_turbo": "stabilityai/sdxl-turbo",
     "sd15_depth": "runwayml/stable-diffusion-inpainting",
 }
 
@@ -29,6 +30,7 @@ CONTROLNET_MODELS = {
     "sd21": "thibaud/controlnet-sd21-normalbae-diffusers",
     "sdxl": "diffusers/controlnet-depth-sdxl-1.0",
     "sdxl_fast": "diffusers/controlnet-depth-sdxl-1.0-small",
+    "sdxl_turbo": "diffusers/controlnet-depth-sdxl-1.0-small",
     "sd15_depth": "lllyasviel/control_v11f1p_sd15_depth",
 }
 
